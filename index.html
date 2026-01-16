@@ -1,0 +1,246 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>어떻게 시각화 하면 좋을까?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+KR:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-blobs" aria-hidden="true">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <div class="page-shell">
+    <div class="page-progress">
+      <div class="dots" id="pageDots"></div>
+      <div class="page-count" id="pageCount"></div>
+    </div>
+
+    <section class="page active" data-title="시작">
+      <header class="hero-card">
+        <p class="eyebrow">데이터 시각화</p>
+        <h1>어떻게 시각화 하면 좋을까?</h1>
+        <p class="lead">
+          다양한 데이터 시각화 방법을 가볍게 맛보고, 같은 데이터라도 표현 방식에 따라
+          해석이 달라질 수 있다는 점을 경험해 보세요.
+        </p>
+        <div class="hero-tags">
+          <span>꺾은선 그래프</span>
+          <span>막대 그래프</span>
+          <span>히스토그램</span>
+          <span>파이 차트</span>
+        </div>
+      </header>
+      <section class="panel" aria-label="콘텐츠 개요">
+        <h2>콘텐츠 개요</h2>
+        <ol class="overview">
+          <li>데이터 시각화 방법을 예시 그래프와 함께 소개합니다.</li>
+          <li>세 가지 데이터로 다양한 시각화를 비교해 보고 가장 적절한 방법을 선택합니다.</li>
+          <li>시각화에서 주의해야 할 점을 확인하며 마무리합니다.</li>
+        </ol>
+      </section>
+      <div class="nav-row">
+        <button class="nav-btn primary" data-next>다음</button>
+      </div>
+    </section>
+
+    <section class="page" data-title="꺾은선">
+      <div class="panel card-news">
+        <div>
+          <p class="eyebrow">시각화 방법 1</p>
+          <h2>꺾은선 그래프</h2>
+          <p>
+            시간에 따른 변화나 흐름을 보여줄 때 가장 잘 어울립니다.
+            증가와 감소 등의 변화 양상을 한눈에 볼 수 있어요.
+          </p>
+        </div>
+        <canvas class="mini-chart" data-mini="line" aria-label="꺾은선 그래프 예시"></canvas>
+      </div>
+      <div class="nav-row">
+        <button class="nav-btn" data-prev>이전</button>
+        <button class="nav-btn primary" data-next>다음</button>
+      </div>
+    </section>
+
+    <section class="page" data-title="막대">
+      <div class="panel card-news">
+        <div>
+          <p class="eyebrow">시각화 방법 2</p>
+          <h2>막대 그래프</h2>
+          <p>
+            범주끼리 크기를 비교할 때 직관적이에요.
+            각각의 막대 높이를 비교해 차이를 쉽게 확인할 수 있습니다.
+          </p>
+        </div>
+        <canvas class="mini-chart" data-mini="bar" aria-label="막대 그래프 예시"></canvas>
+      </div>
+      <div class="nav-row">
+        <button class="nav-btn" data-prev>이전</button>
+        <button class="nav-btn primary" data-next>다음</button>
+      </div>
+    </section>
+
+    <section class="page" data-title="히스토그램">
+      <div class="panel card-news">
+        <div>
+          <p class="eyebrow">시각화 방법 3</p>
+          <h2>히스토그램</h2>
+          <p>
+            값이 어떤 구간에 많이 몰려 있는지 보고 싶을 때 사용해요.
+            데이터의 분포를 파악하기에 적합합니다.
+          </p>
+        </div>
+        <canvas class="mini-chart" data-mini="histogram" aria-label="히스토그램 예시"></canvas>
+      </div>
+      <div class="nav-row">
+        <button class="nav-btn" data-prev>이전</button>
+        <button class="nav-btn primary" data-next>다음</button>
+      </div>
+    </section>
+
+    <section class="page" data-title="파이">
+      <div class="panel card-news">
+        <div>
+          <p class="eyebrow">시각화 방법 4</p>
+          <h2>파이 차트</h2>
+          <p>
+            전체에서 각 범주가 차지하는 비율을 보여줄 때 사용합니다.
+            비중이 얼마나 되는지 바로 확인할 수 있어요.
+          </p>
+        </div>
+        <canvas class="mini-chart" data-mini="pie" aria-label="파이 차트 예시"></canvas>
+      </div>
+      <div class="nav-row">
+        <button class="nav-btn" data-prev>이전</button>
+        <button class="nav-btn primary" data-next>다음</button>
+      </div>
+    </section>
+
+    <section class="page" data-title="데이터 1">
+      <div class="panel">
+        <h2>데이터 1: 시간에 따른 변화</h2>
+        <p class="dataset-desc">A기업의 지난 30일간 주가 변화 ($)</p>
+        <div class="question-box" style="background: #eef2ff; padding: 16px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #c7d2fe;">
+            <p style="margin: 0; font-weight: 600; color: #4338ca;">질문: 주가가 전반적으로 상승했나요, 하락했나요? 가장 주가가 높았던 때는 언제인가요?</p>
+        </div>
+        <div class="chart-area" data-chart-id="time" data-default="line">
+          <div class="chart-card">
+            <canvas aria-label="시간 변화 시각화"></canvas>
+          </div>
+          <div class="controls">
+            <div class="button-row">
+              <button data-chart="line" class="active">꺾은선</button>
+              <button data-chart="bar">막대</button>
+            </div>
+            <div class="hint" data-hint></div>
+          </div>
+        </div>
+        <div class="reflection" data-correct="line">
+          <p>가장 적절한 시각화는 무엇일까요?</p>
+          <div class="choice-grid" role="group" aria-label="데이터 1 시각화 선택">
+            <label><input type="radio" name="bestChart-time" value="line" /> 꺾은선 그래프</label>
+            <label><input type="radio" name="bestChart-time" value="bar" /> 막대 그래프</label>
+          </div>
+          <div class="feedback" aria-live="polite"></div>
+        </div>
+      </div>
+      <div class="nav-row">
+        <button class="nav-btn" data-prev>이전</button>
+        <button class="nav-btn primary" data-next>다음</button>
+      </div>
+    </section>
+
+    <section class="page" data-title="데이터 2">
+      <div class="panel">
+        <h2>데이터 2: 비율 비교</h2>
+        <p class="dataset-desc">스마트폰 제조사별 시장 점유율 (%)</p>
+        <div class="question-box" style="background: #eef2ff; padding: 16px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #c7d2fe;">
+            <p style="margin: 0; font-weight: 600; color: #4338ca;">질문: S사와 A사의 점유율을 합하면 절반이 넘을까요?</p>
+        </div>
+        <div class="chart-area" data-chart-id="ratio" data-default="pie">
+          <div class="chart-card">
+            <canvas aria-label="비율 비교 시각화"></canvas>
+          </div>
+          <div class="controls">
+            <div class="button-row">
+              <button data-chart="pie" class="active">파이</button>
+              <button data-chart="bar">막대</button>
+            </div>
+            <div class="hint" data-hint></div>
+          </div>
+        </div>
+        <div class="reflection" data-correct="pie">
+          <p>가장 적절한 시각화는 무엇일까요?</p>
+          <div class="choice-grid" role="group" aria-label="데이터 2 시각화 선택">
+            <label><input type="radio" name="bestChart-ratio" value="pie" /> 파이 차트</label>
+            <label><input type="radio" name="bestChart-ratio" value="bar" /> 막대 그래프</label>
+          </div>
+          <div class="feedback" aria-live="polite"></div>
+        </div>
+      </div>
+      <div class="nav-row">
+        <button class="nav-btn" data-prev>이전</button>
+        <button class="nav-btn primary" data-next>다음</button>
+      </div>
+    </section>
+
+    <section class="page" data-title="데이터 3">
+      <div class="panel">
+        <h2>데이터 3: 분포 살펴보기</h2>
+        <p class="dataset-desc">중학교 1학년 학생들의 발 사이즈 분포 (100명)</p>
+        <div class="question-box" style="background: #eef2ff; padding: 16px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #c7d2fe;">
+            <p style="margin: 0; font-weight: 600; color: #4338ca;">질문: 발사이즈가 240대인 학생과 250대인 학생 중 누가 더 많을까요?</p>
+        </div>
+        <div class="chart-area" data-chart-id="distribution" data-default="histogram">
+          <div class="chart-card">
+            <canvas aria-label="점수 분포 시각화"></canvas>
+          </div>
+          <div class="controls">
+            <div class="button-row">
+              <button data-chart="histogram" class="active">히스토그램</button>
+              <button data-chart="bar">막대</button>
+            </div>
+            <div class="hint" data-hint></div>
+          </div>
+        </div>
+        <div class="reflection" data-correct="histogram">
+          <p>가장 적절한 시각화는 무엇일까요?</p>
+          <div class="choice-grid" role="group" aria-label="데이터 3 시각화 선택">
+            <label><input type="radio" name="bestChart-distribution" value="histogram" /> 히스토그램</label>
+            <label><input type="radio" name="bestChart-distribution" value="bar" /> 막대 그래프</label>
+          </div>
+          <div class="feedback" aria-live="polite"></div>
+        </div>
+      </div>
+      <div class="nav-row">
+        <button class="nav-btn" data-prev>이전</button>
+        <button class="nav-btn primary" data-next>다음</button>
+      </div>
+    </section>
+
+    <section class="page" data-title="주의점">
+      <div class="panel caution">
+        <h2>시각화할 때 주의해야 할 점</h2>
+        <ul>
+          <li>축의 시작점과 간격을 확인해요. 과장된 차이가 생길 수 있어요.</li>
+          <li>데이터의 특성(범주/시간/분포)에 맞는 차트를 선택해요.</li>
+          <li>그래프에 제목과 단위를 꼭 적어 이해를 돕습니다.</li>
+        </ul>
+        <p class="goal">학습 목표: 데이터 유형에 맞는 적합한 시각화 방법을 이해한다.</p>
+      </div>
+      <div class="nav-row">
+        <button class="nav-btn" data-prev>이전</button>
+        <button class="nav-btn primary" data-next>처음으로</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
