@@ -9,9 +9,12 @@ const datasets = {
     title: "A기업의 지난 30일간 주가 변화 ($)",
     labels: Array.from({length: 30}, (_, i) => (i + 1).toString()),
     values: [50, 52, 56, 57, 63, 60, 63, 66, 69, 64, 60, 55, 54, 55, 58, 53, 53, 48, 52, 49, 44, 42, 48, 51, 49, 44, 43, 39, 40, 40],
+    rawValues: [50, 52, 56, 57, 63, 60, 63, 66, 69, 64, 60, 55, 54, 55, 58, 53, 53, 48, 52, 49, 44, 42, 48, 51, 49, 44, 43, 39, 40, 40],
+    histogramBinSize: 5,
     hints: {
       line: "데이터가 많아도 흐름을 한눈에 파악할 수 있어요.",
-      bar: "막대 간의 높이 차이를 하나씩 비교하기 번거로워요."
+      bar: "막대 간의 높이 차이를 하나씩 비교하기 번거로워요.",
+      histogram: "계급에 속하는 도수로만 표현되니까 시간에 따른 구체적인 변화가 보이지 않아요."
     }
   },
   ratio: {
@@ -20,15 +23,19 @@ const datasets = {
     values: [30, 22, 25, 15, 8],
     hints: {
       pie: "전체 시장에서 각 제조사가 차지하는 비중을 쉽게 비교할 수 있어요.",
-      bar: "각 제조사의 점유율 크기를 비교할 때도 사용할 수 있어요."
+      bar: "각 제조사의 점유율 크기를 비교할 때도 사용할 수 있어요.",
+      line: "제조사 간에는 연결된 흐름이 없어서 꺾은선 그래프는 적합하지 않아요."
     }
   },
   distribution: {
     title: "중학교 1학년 학생들의 발 사이즈 분포 (100명)",
     rawValues: [235, 242, 258, 227, 245, 263, 238, 251, 269, 233, 248, 256, 224, 241, 267, 237, 254, 272, 229, 246, 261, 234, 249, 265, 226, 243, 259, 231, 252, 268, 236, 247, 264, 228, 244, 271, 239, 253, 266, 232, 248, 257, 225, 242, 262, 238, 255, 273, 230, 247, 260, 235, 250, 267, 227, 244, 258, 233, 251, 269, 236, 248, 263, 229, 245, 270, 238, 254, 265, 231, 249, 257, 226, 243, 261, 237, 252, 268, 228, 246, 259, 234, 250, 266, 230, 247, 262, 239, 255, 271, 232, 248, 264, 225, 244, 260, 236, 253, 267, 241],
+    labels: ["220~", "230~", "240~", "250~", "260~", "270~"],
+    values: [4, 16, 28, 30, 18, 4],
     hints: {
       histogram: "발사이즈가 어느 범위에 많이 분포하는지 알 수 있어요.",
-      bar: "모든 발사이즈 값을 개별 막대로 다 그리니 분포를 보기가 너무 어려워요." 
+      bar: "모든 발사이즈 값을 개별 막대로 다 그리니 분포를 보기가 너무 어려워요.",
+      line: "각 구간은 연속적인 흐름이 아니라 분포이므로 꺾은선 그래프는 적합하지 않아요."
     }
   }
 };
@@ -144,6 +151,15 @@ function drawFormattedLabels(ctx, width, height, padding, labels, type = "line",
       const centerX = padding.left + index * step + step / 2;
       ctx.fillText(label, centerX, height - padding.bottom + 16);
     });
+  } else if (type === "category") {
+    // 카테고리형 막대그래프 (데이터2 등) - 모든 레이블 표시
+    const availableWidth = width - padding.left - padding.right;
+    const step = availableWidth / labels.length;
+    
+    labels.forEach((label, index) => {
+      const centerX = padding.left + index * step + step / 2;
+      ctx.fillText(label, centerX, height - padding.bottom + 18);
+    });
   } else if (type === "bar") {
     const availableWidth = width - padding.left - padding.right;
     const step = availableWidth / labels.length;
@@ -194,10 +210,24 @@ function drawValueScale(ctx, width, height, padding, min, max, unit) {
   ctx.textAlign = "left"; // Reset defaults
 }
 
-function drawLineChart(ctx, width, height, labels, values) {
-  const padding = { top: 30, right: 20, bottom: 40, left: 50 };
+function drawLineChart(ctx, width, height, labels, values, chartId) {
+  const padding = { top: 30, right: 20, bottom: 50, left: 60 };
   const max = Math.max(...values);
   const min = Math.min(...values);
+
+  // 축 단위 설정
+  let yUnit = "";
+  let xUnit = "";
+  if (chartId === "time") {
+    yUnit = "$";
+    xUnit = "일";
+  } else if (chartId === "ratio") {
+    yUnit = "%";
+    xUnit = "";
+  } else if (chartId === "distribution") {
+    yUnit = "명";
+    xUnit = "mm";
+  }
 
   drawGrid(ctx, width, height, padding);
   drawAxes(ctx, width, height, padding);
@@ -223,12 +253,34 @@ function drawLineChart(ctx, width, height, labels, values) {
     ctx.fill();
   });
 
-  drawValueScale(ctx, width, height, padding, min, max, "");
+  drawValueScale(ctx, width, height, padding, min, max, yUnit);
+  
+  // X축 단위 표시
+  if (xUnit) {
+    ctx.fillStyle = "#5d5a52";
+    ctx.font = '11px "Noto Sans KR", sans-serif';
+    ctx.textAlign = "right";
+    ctx.fillText(`(${xUnit})`, width - padding.right, height - 5);
+  }
 }
 
-function drawBarChart(ctx, width, height, labels, values) {
-  const padding = { top: 30, right: 20, bottom: 40, left: 50 };
+function drawBarChart(ctx, width, height, labels, values, chartId) {
+  const padding = { top: 30, right: 20, bottom: 50, left: 60 };
   const max = Math.max(...values);
+
+  // 축 단위 설정
+  let yUnit = "";
+  let xUnit = "";
+  if (chartId === "time") {
+    yUnit = "$";
+    xUnit = "일";
+  } else if (chartId === "ratio") {
+    yUnit = "%";
+    xUnit = "";
+  } else if (chartId === "distribution") {
+    yUnit = "명";
+    xUnit = "mm";
+  }
 
   drawGrid(ctx, width, height, padding);
   drawAxes(ctx, width, height, padding);
@@ -251,8 +303,17 @@ function drawBarChart(ctx, width, height, labels, values) {
     ctx.fillRect(x, height - padding.bottom - barHeight, barWidth, barHeight);
   });
 
-  drawFormattedLabels(ctx, width, height, padding, labels, "bar");
-  drawValueScale(ctx, width, height, padding, 0, max, "");
+  // 레이블 표시 (데이터 2의 막대 그래프에도 레이블 표시)
+  drawFormattedLabels(ctx, width, height, padding, labels, chartId === "distribution" ? "bar" : "category");
+  drawValueScale(ctx, width, height, padding, 0, max, yUnit);
+  
+  // X축 단위 표시
+  if (xUnit) {
+    ctx.fillStyle = "#5d5a52";
+    ctx.font = '11px "Noto Sans KR", sans-serif';
+    ctx.textAlign = "right";
+    ctx.fillText(`(${xUnit})`, width - padding.right, height - 5);
+  }
 }
 
 function buildHistogram(rawValues, binSize) {
@@ -306,7 +367,58 @@ function drawHistogram(ctx, width, height, rawValues) {
   return { counts, boundaryLabels };
 }
 
-function drawPieChart(ctx, width, height, labels, values) {
+function drawHistogramWithBinSize(ctx, width, height, rawValues, binSize, chartId) {
+  const padding = { top: 30, right: 20, bottom: 50, left: 60 };
+  const { counts, boundaryLabels, min } = buildHistogram(rawValues, binSize);
+  const maxCount = Math.max(...counts);
+  const numBins = counts.length;
+
+  // 축 단위 설정
+  let yUnit = "명";
+  let xUnit = "";
+  if (chartId === "time") {
+    yUnit = "일";
+    xUnit = "$";
+  } else if (chartId === "distribution") {
+    yUnit = "명";
+    xUnit = "mm";
+  }
+
+  drawGrid(ctx, width, height, padding);
+  drawAxes(ctx, width, height, padding);
+
+  const availableWidth = width - padding.left - padding.right;
+  const barWidth = availableWidth / numBins;
+
+  counts.forEach((count, index) => {
+    const x = padding.left + index * barWidth;
+    const barHeight = (count / maxCount) * (height - padding.top - padding.bottom);
+    ctx.fillStyle = "#4d8b31";
+    ctx.fillRect(x, height - padding.bottom - barHeight, barWidth, barHeight);
+  });
+
+  ctx.fillStyle = "#5d5a52";
+  ctx.font = '10px "Noto Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif';
+  ctx.textAlign = "center";
+  boundaryLabels.forEach((value, index) => {
+    const x = padding.left + (index / numBins) * availableWidth;
+    ctx.fillText(value.toString(), x, height - padding.bottom + 16);
+  });
+
+  drawValueScale(ctx, width, height, padding, 0, maxCount, yUnit);
+
+  // X축 단위 표시
+  if (xUnit) {
+    ctx.fillStyle = "#5d5a52";
+    ctx.font = '11px "Noto Sans KR", sans-serif';
+    ctx.textAlign = "right";
+    ctx.fillText(`(${xUnit})`, width - padding.right, height - 5);
+  }
+
+  return { counts, boundaryLabels };
+}
+
+function drawPieChart(ctx, width, height, labels, values, chartId) {
   const total = values.reduce((sum, value) => sum + value, 0);
   const radius = Math.min(width, height) * 0.32;
   const centerX = width / 2;
@@ -374,9 +486,8 @@ function renderChart(area, type) {
   const height = canvas.getBoundingClientRect().height;
   ctx.clearRect(0, 0, width, height);
 
-  if (type === "line") drawLineChart(ctx, width, height, data.labels, data.values);
-  if (type === "bar" && data.rawValues) {
-    // Show exact frequencies for every single value (no binning)
+  if (type === "line" && data.rawValues && chartId === "distribution") {
+    // 분포 데이터의 꺾은선: 막대그래프처럼 모든 개별 값의 빈도를 꺾은선으로 표시
     const countsMap = {};
     data.rawValues.forEach(v => { countsMap[v] = (countsMap[v] || 0) + 1; });
     const min = Math.min(...data.rawValues);
@@ -387,12 +498,32 @@ function renderChart(area, type) {
         labels.push(i.toString());
         counts.push(countsMap[i] || 0);
     }
-    drawBarChart(ctx, width, height, labels, counts);
-  } else if (type === "bar") {
-    drawBarChart(ctx, width, height, data.labels, data.values);
+    drawLineChart(ctx, width, height, labels, counts, chartId);
+  } else if (type === "line") {
+    drawLineChart(ctx, width, height, data.labels, data.values, chartId);
   }
-  if (type === "histogram") drawHistogram(ctx, width, height, data.rawValues);
-  if (type === "pie") drawPieChart(ctx, width, height, data.labels, data.values);
+  if (type === "bar" && chartId === "distribution") {
+    // 분포 데이터: 모든 개별 값의 빈도를 막대로 표시
+    const countsMap = {};
+    data.rawValues.forEach(v => { countsMap[v] = (countsMap[v] || 0) + 1; });
+    const min = Math.min(...data.rawValues);
+    const max = Math.max(...data.rawValues);
+    const labels = [];
+    const counts = [];
+    for (let i = min; i <= max; i++) {
+        labels.push(i.toString());
+        counts.push(countsMap[i] || 0);
+    }
+    drawBarChart(ctx, width, height, labels, counts, chartId);
+  } else if (type === "bar") {
+    // 데이터 1과 데이터 2는 동일한 labels/values 사용
+    drawBarChart(ctx, width, height, data.labels, data.values, chartId);
+  }
+  if (type === "histogram") {
+    const binSize = data.histogramBinSize || 10;
+    drawHistogramWithBinSize(ctx, width, height, data.rawValues || data.values, binSize, chartId);
+  }
+  if (type === "pie") drawPieChart(ctx, width, height, data.labels, data.values, chartId);
 
   const hint = area.querySelector("[data-hint]");
   if (hint) hint.textContent = ""; // 힌트 숨김 - 선택 시에만 표시
@@ -420,16 +551,16 @@ function drawMiniCharts() {
     const height = canvas.getBoundingClientRect().height;
     ctx.clearRect(0, 0, width, height);
     if (type === "line") {
-      drawLineChart(ctx, width, height, miniExamples.line.labels, miniExamples.line.values);
+      drawLineChart(ctx, width, height, miniExamples.line.labels, miniExamples.line.values, "mini");
     }
     if (type === "bar") {
-      drawBarChart(ctx, width, height, miniExamples.bar.labels, miniExamples.bar.values);
+      drawBarChart(ctx, width, height, miniExamples.bar.labels, miniExamples.bar.values, "mini");
     }
     if (type === "histogram") {
       drawHistogram(ctx, width, height, miniExamples.histogram.rawValues);
     }
     if (type === "pie") {
-      drawPieChart(ctx, width, height, miniExamples.pie.labels, miniExamples.pie.values);
+      drawPieChart(ctx, width, height, miniExamples.pie.labels, miniExamples.pie.values, "mini");
     }
   });
 }
@@ -438,17 +569,20 @@ const feedbackMessages = {
   time: {
     correct: "line",
     line: { text: "정답이에요! 꺾은선 그래프는 시간에 따른 변화를 한눈에 파악하기 좋아요.", hint: "데이터가 많아도 흐름을 한눈에 파악할 수 있어요." },
-    bar: { text: "아쉬워요. 막대 그래프는 30개나 되는 데이터의 흐름을 파악하기 어려워요.", hint: "막대 간의 높이 차이를 하나씩 비교하기 번거로워요." }
+    bar: { text: "아쉬워요. 막대 그래프는 30개나 되는 데이터의 흐름을 파악하기 어려워요.", hint: "막대 간의 높이 차이를 하나씩 비교하기 번거로워요." },
+    histogram: { text: "아쉬워요. 히스토그램은 계급에 속하는 도수로만 표현되어 시간에 따른 구체적인 변화를 알 수 없어요.", hint: "계급에 속하는 도수로만 표현되니까 시간에 따른 구체적인 변화가 보이지 않아요." }
   },
   ratio: {
     correct: "pie",
     pie: { text: "정답이에요! 파이 차트는 전체에서 각 부분이 차지하는 비율을 직관적으로 보여줘요.", hint: "전체 시장에서 각 제조사가 차지하는 비중을 쉽게 비교할 수 있어요." },
-    bar: { text: "아쉬워요. 막대 그래프도 비교는 가능하지만, 전체 대비 비율을 보여주기엔 파이 차트가 더 적합해요.", hint: "각 제조사의 점유율 크기를 비교할 때도 사용할 수 있어요." }
+    bar: { text: "아쉬워요. 막대 그래프도 비교는 가능하지만, 전체 대비 비율을 보여주기엔 파이 차트가 더 적합해요.", hint: "각 제조사의 점유율 크기를 비교할 때도 사용할 수 있어요." },
+    line: { text: "아쉬워요. 꺾은선 그래프는 연속적인 흐름을 보여주는데, 제조사 간에는 연결된 흐름이 없어요.", hint: "제조사 간에는 연결된 흐름이 없어서 꺾은선 그래프는 적합하지 않아요." }
   },
   distribution: {
     correct: "histogram",
     histogram: { text: "정답이에요! 히스토그램은 데이터가 어느 구간에 몰려있는지 분포를 파악하기 좋아요.", hint: "발사이즈가 어느 범위에 많이 분포하는지 알 수 있어요." },
-    bar: { text: "아쉬워요. 막대 그래프로 모든 값을 개별로 표시하면 분포를 파악하기 어려워요.", hint: "모든 발사이즈 값을 개별 막대로 다 그리니 분포를 보기가 너무 어려워요." }
+    bar: { text: "아쉬워요. 막대 그래프로 모든 값을 개별로 표시하면 분포를 파악하기 어려워요.", hint: "모든 발사이즈 값을 개별 막대로 다 그리니 분포를 보기가 너무 어려워요." },
+    line: { text: "아쉬워요. 꺾은선 그래프는 연속적인 변화를 보여주는데, 분포 데이터에는 적합하지 않아요.", hint: "각 구간은 연속적인 흐름이 아니라 분포이므로 꺾은선 그래프는 적합하지 않아요." }
   }
 };
 
@@ -494,10 +628,10 @@ function renderVisibleCharts() {
     const width = canvas.getBoundingClientRect().width;
     const height = canvas.getBoundingClientRect().height;
     ctx.clearRect(0, 0, width, height);
-    if (type === "line") drawLineChart(ctx, width, height, miniExamples.line.labels, miniExamples.line.values);
-    if (type === "bar") drawBarChart(ctx, width, height, miniExamples.bar.labels, miniExamples.bar.values);
+    if (type === "line") drawLineChart(ctx, width, height, miniExamples.line.labels, miniExamples.line.values, "mini");
+    if (type === "bar") drawBarChart(ctx, width, height, miniExamples.bar.labels, miniExamples.bar.values, "mini");
     if (type === "histogram") drawHistogram(ctx, width, height, miniExamples.histogram.rawValues);
-    if (type === "pie") drawPieChart(ctx, width, height, miniExamples.pie.labels, miniExamples.pie.values);
+    if (type === "pie") drawPieChart(ctx, width, height, miniExamples.pie.labels, miniExamples.pie.values, "mini");
   });
 }
 

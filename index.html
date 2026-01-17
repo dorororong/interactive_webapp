@@ -135,7 +135,7 @@
         <h2>데이터 1: 시간에 따른 변화</h2>
         <p class="dataset-desc">A기업의 지난 30일간 주가 변화 ($)</p>
         <div class="question-box" style="background: #eef2ff; padding: 16px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #c7d2fe;">
-            <p style="margin: 0; font-weight: 600; color: #4338ca;">질문: 주가가 전반적으로 상승했나요, 하락했나요? 가장 주가가 높았던 때는 언제인가요?</p>
+            <p style="margin: 0; font-weight: 600; color: #4338ca;">질문: 전체 기간동안 주가는 어떻게 변했나요? 증가하는 구간과 감소하는 구간은 어디인가요?</p>
         </div>
         <div class="chart-area" data-chart-id="time" data-default="line">
           <div class="chart-card">
@@ -143,8 +143,9 @@
           </div>
           <div class="controls">
             <div class="button-row">
-              <button data-chart="line" class="active">꺾은선</button>
-              <button data-chart="bar">막대</button>
+              <button data-chart="line" class="active">꺾은선 그래프</button>
+              <button data-chart="bar">막대 그래프</button>
+              <button data-chart="histogram">히스토그램</button>
             </div>
             <div class="hint" data-hint></div>
           </div>
@@ -154,6 +155,7 @@
           <div class="choice-grid" role="group" aria-label="데이터 1 시각화 선택">
             <label><input type="radio" name="bestChart-time" value="line" /> 꺾은선 그래프</label>
             <label><input type="radio" name="bestChart-time" value="bar" /> 막대 그래프</label>
+            <label><input type="radio" name="bestChart-time" value="histogram" /> 히스토그램</label>
           </div>
           <div class="feedback" aria-live="polite"></div>
         </div>
@@ -177,8 +179,9 @@
           </div>
           <div class="controls">
             <div class="button-row">
-              <button data-chart="pie" class="active">파이</button>
-              <button data-chart="bar">막대</button>
+              <button data-chart="pie" class="active">파이 차트</button>
+              <button data-chart="bar">막대 그래프</button>
+              <button data-chart="line">꺾은선 그래프</button>
             </div>
             <div class="hint" data-hint></div>
           </div>
@@ -188,6 +191,7 @@
           <div class="choice-grid" role="group" aria-label="데이터 2 시각화 선택">
             <label><input type="radio" name="bestChart-ratio" value="pie" /> 파이 차트</label>
             <label><input type="radio" name="bestChart-ratio" value="bar" /> 막대 그래프</label>
+            <label><input type="radio" name="bestChart-ratio" value="line" /> 꺾은선 그래프</label>
           </div>
           <div class="feedback" aria-live="polite"></div>
         </div>
@@ -212,7 +216,8 @@
           <div class="controls">
             <div class="button-row">
               <button data-chart="histogram" class="active">히스토그램</button>
-              <button data-chart="bar">막대</button>
+              <button data-chart="bar">막대 그래프</button>
+              <button data-chart="line">꺾은선 그래프</button>
             </div>
             <div class="hint" data-hint></div>
           </div>
@@ -222,6 +227,7 @@
           <div class="choice-grid" role="group" aria-label="데이터 3 시각화 선택">
             <label><input type="radio" name="bestChart-distribution" value="histogram" /> 히스토그램</label>
             <label><input type="radio" name="bestChart-distribution" value="bar" /> 막대 그래프</label>
+            <label><input type="radio" name="bestChart-distribution" value="line" /> 꺾은선 그래프</label>
           </div>
           <div class="feedback" aria-live="polite"></div>
         </div>
